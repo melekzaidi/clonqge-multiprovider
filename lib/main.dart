@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multiprovider/bloc/Bottom_bloc.dart';
+import 'package:multiprovider/bloc/top_bloc.dart';
+import 'package:multiprovider/models/constants.dart';
+import 'package:multiprovider/views/app_bloc_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,6 +40,24 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+        appBar: AppBar(title: Text("multiprovider")),
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.dark,
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider<TopBloc>(
+                  create: (_) => TopBloc(
+                      waitBeforeLoading: Duration(seconds: 2), urls: images)),
+              BlocProvider<BottomBloc>(
+                  create: (_) => BottomBloc(
+                      waitBeforeLoading: Duration(seconds: 2), urls: images))
+            ],
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [AppBlocView<TopBloc>(), AppBlocView<BottomBloc>()],
+            ),
+          ),
+        ));
   }
 }
